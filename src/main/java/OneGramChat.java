@@ -35,16 +35,17 @@ public class OneGramChat {
     public void logInUser() {
         String name = askUserName();
         String password = askUserPassword();
-        Optional<User> chekedUser = usersList.stream()
-                .filter(s -> s.getName().equals(name))
-                .filter(s -> s.getPassword().equals(password))
-                .findAny();
-
-        chekedUser.ifPresentOrElse(
-                value -> { System.out.println(USER_LOGGED_IN);
-                    currentUser = value; },
-                () -> {throw new RuntimeException(USER_DO_NOT_EXIST_ERROR); }
-        );
+        usersList.stream()
+                .filter(person -> person.getName().equals(name) && person.getPassword().equals(password))
+                .findAny()
+                .ifPresentOrElse(
+                        person -> {
+                            System.out.println(USER_LOGGED_IN);
+                            currentUser = person;
+                            },
+                        () -> {
+                            throw new RuntimeException(USER_DO_NOT_EXIST_ERROR);
+                        });
     }
 
     public void logOutUser() {
