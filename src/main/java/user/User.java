@@ -8,11 +8,12 @@ import java.util.*;
 public class User {
     private final String name;
     private final String password;
-    private HashMap<MessageType, ArrayList<Message>> messages;
+    private HashMap<MessageType, LinkedList<Message>> messages;
 
     public User(String name, String password) {
         this.name = name;
         this.password = password;
+        messages = new HashMap<>();
     }
 
     public String getName() {
@@ -23,7 +24,16 @@ public class User {
         return password;
     }
 
-    public Map<MessageType, ArrayList<Message>> getMessages() {
+    public Map<MessageType, LinkedList<Message>> getMessages() {
         return messages;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", messages=" + messages +
+                '}';
     }
 }
