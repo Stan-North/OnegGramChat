@@ -8,12 +8,15 @@ import java.util.*;
 public class User {
     private final String name;
     private final String password;
-    private HashMap<MessageType, LinkedList<Message>> messages;
+    private HashMap<MessageType, ArrayList<Message>> messages;
 
     public User(String name, String password) {
         this.name = name;
         this.password = password;
         messages = new HashMap<>();
+        messages.put(MessageType.INCOMING, new ArrayList<>());
+        messages.put(MessageType.OUTGOING, new ArrayList<>());
+
     }
 
     public String getName() {
@@ -24,7 +27,7 @@ public class User {
         return password;
     }
 
-    public Map<MessageType, LinkedList<Message>> getMessages() {
+    public Map<MessageType, ArrayList<Message>> getMessages() {
         return messages;
     }
 

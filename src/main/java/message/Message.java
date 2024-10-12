@@ -8,8 +8,9 @@ public class Message {
     private User sender;
     private final User recipient;
 
-    public Message(String text, User recipient) {
+    public Message(String text, User sender, User recipient) {
         this.text = text;
+        this.sender = sender;
         this.recipient = recipient;
     }
 
