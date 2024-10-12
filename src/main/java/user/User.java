@@ -8,7 +8,7 @@ import java.util.*;
 public class User {
     private final String name;
     private final String password;
-    private HashMap<MessageType, LinkedList<Message>> messages;
+    private HashMap<MessageType, ArrayList<Message>> messages;
 
     public User(String name, String password) {
         this.name = name;
@@ -24,7 +24,7 @@ public class User {
         return password;
     }
 
-    public Map<MessageType, LinkedList<Message>> getMessages() {
+    public Map<MessageType, ArrayList<Message>> getMessages() {
         return messages;
     }
 
