@@ -1,4 +1,3 @@
-import message.Message;
 import message.MessageType;
 import user.User;
 
@@ -92,7 +91,6 @@ public class OneGramChat {
         currentUser
                 .getMessages()
                 .get(MessageType.INCOMING)
-                .stream()
                 .forEach(message -> System.out.println(
                         INCOMING_PATTERN.formatted(message.getSender(), message.getText())));
     }
@@ -104,7 +102,6 @@ public class OneGramChat {
         currentUser
                 .getMessages()
                 .get(MessageType.OUTGOING)
-                .stream()
                 .forEach(message -> System.out.println(
                         OUTGOING_PATTERN.formatted(message.getSender(), message.getText())));
     }
