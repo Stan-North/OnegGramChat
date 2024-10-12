@@ -1,7 +1,7 @@
-package user;
+package com.javaacademy.onegramchat.user;
 
-import message.Message;
-import message.MessageType;
+import com.javaacademy.onegramchat.message.Message;
+import com.javaacademy.onegramchat.message.MessageType;
 
 import java.util.*;
 

@@ -1,3 +1,6 @@
+package com.javaacademy.onegramchat;
+
+import com.javaacademy.onegramchat.chat.OneGramChat;
 
 public class Runner {
     public static void main(String[] args) {
@@ -23,8 +26,8 @@ public class Runner {
         //oneGramChat.logOutUser();
         //oneGramChat.createUser();
 
-//        for (User user : oneGramChat.usersList) {
-//            System.out.println(user);
+//        for (User com.javaacademy.onegramchat.message.user : oneGramChat.usersList) {
+//            System.out.println(com.javaacademy.onegramchat.message.user);
 //        }
 
     }

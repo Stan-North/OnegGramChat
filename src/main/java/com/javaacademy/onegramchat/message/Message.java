@@ -1,6 +1,6 @@
-package message;
+package com.javaacademy.onegramchat.message;
 
-import user.User;
+import com.javaacademy.onegramchat.user.User;
 
 public class Message {
     private String text;

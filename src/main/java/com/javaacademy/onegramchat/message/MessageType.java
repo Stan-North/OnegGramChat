@@ -1,4 +1,4 @@
-package message;
+package com.javaacademy.onegramchat.message;
 
 public enum MessageType {
     INCOMING("Входящие"),
