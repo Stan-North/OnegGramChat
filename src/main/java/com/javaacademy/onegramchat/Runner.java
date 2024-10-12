@@ -26,8 +26,8 @@ public class Runner {
         //oneGramChat.logOutUser();
         //oneGramChat.createUser();
 
-//        for (User com.javaacademy.onegramchat.message.user : oneGramChat.usersList) {
-//            System.out.println(com.javaacademy.onegramchat.message.user);
+//        for (User user : oneGramChat.usersList) {
+//            System.out.println(user);
 //        }
 
     }
