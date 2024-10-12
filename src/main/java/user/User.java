@@ -14,6 +14,9 @@ public class User {
         this.name = name;
         this.password = password;
         messages = new HashMap<>();
+        messages.put(MessageType.INCOMING, new ArrayList<>());
+        messages.put(MessageType.OUTGOING, new ArrayList<>());
+
     }
 
     public String getName() {
