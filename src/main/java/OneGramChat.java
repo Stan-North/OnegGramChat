@@ -153,7 +153,7 @@ public class OneGramChat {
     }
 
     /**
-     * Печать к консоль всех входящих сообщений пользователя
+     * Печать в консоль всех входящих сообщений пользователя
      */
     private void printIncomingMessage() {
         currentUser
@@ -164,7 +164,7 @@ public class OneGramChat {
     }
 
     /**
-     * Печать к консоль всех исходящих сообщений пользователя
+     * Печать в консоль всех исходящих сообщений пользователя
      */
     private void printOutgoingMessage() {
         currentUser
