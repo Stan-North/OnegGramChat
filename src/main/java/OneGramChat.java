@@ -69,7 +69,7 @@ public class OneGramChat {
      */
     private String askUserName() {
         System.out.println(ENTER_USER_NAME);
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     /**
@@ -77,7 +77,7 @@ public class OneGramChat {
      */
     private String askUserPassword() {
         System.out.println(ENTER_USER_PASSWORD);
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     /**
@@ -85,7 +85,7 @@ public class OneGramChat {
      */
     private String askNameUserForLetter() {
         System.out.println(RECIPIENT_USER);
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     /**
@@ -93,7 +93,7 @@ public class OneGramChat {
      */
     private String askTextForLetter() {
         System.out.println(RECIPIENT_LETTER);
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     /**
@@ -160,7 +160,7 @@ public class OneGramChat {
                 .getMessages()
                 .get(MessageType.INCOMING)
                 .forEach(message -> System.out.println(
-                        INCOMING_PATTERN.formatted(message.getSender(), message.getText())));
+                        INCOMING_PATTERN.formatted(message.getSender().getName(), message.getText())));
     }
 
     /**
@@ -171,6 +171,6 @@ public class OneGramChat {
                 .getMessages()
                 .get(MessageType.OUTGOING)
                 .forEach(message -> System.out.println(
-                        OUTGOING_PATTERN.formatted(message.getSender(), message.getText())));
+                        OUTGOING_PATTERN.formatted(message.getSender().getName(), message.getText())));
     }
 }
