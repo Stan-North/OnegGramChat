@@ -56,12 +56,12 @@ public class OneGramChat {
         currentUser = null;
     }
 
-    public String askUserName() {
+    private String askUserName() {
         System.out.println(ENTER_USER_NAME);
         return scanner.next();
     }
 
-    public String askUserPassword() {
+    private String askUserPassword() {
         System.out.println(ENTER_USER_PASSWORD);
         return scanner.next();
     }
