@@ -1,3 +1,6 @@
+package com.javaacademy.onegramchat;
+
+import com.javaacademy.onegramchat.chat.OneGramChat;
 
 public class Runner {
     public static void main(String[] args) {
@@ -16,7 +19,9 @@ public class Runner {
         System.out.println("АВТОРИЗАЦИЯ второго пользователя");
         oneGramChat.logInUser();
         oneGramChat.writeLetter();
-        oneGramChat.logOutUser();
+//        oneGramChat.logOutUser();
+
+        oneGramChat.readLetters();
 
         //oneGramChat.logOutUser();
         //oneGramChat.createUser();

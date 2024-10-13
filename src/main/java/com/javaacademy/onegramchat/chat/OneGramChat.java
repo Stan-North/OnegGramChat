@@ -1,6 +1,8 @@
-import message.Message;
-import message.MessageType;
-import user.User;
+package com.javaacademy.onegramchat.chat;
+
+import com.javaacademy.onegramchat.message.Message;
+import com.javaacademy.onegramchat.message.MessageType;
+import com.javaacademy.onegramchat.user.User;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -13,7 +15,8 @@ public class OneGramChat {
     private static final String USER_IS_NOT_LOGGED_IN = "Вы не авторизованы";
     private static final String RECIPIENT_USER = "Введите имя адресата";
     private static final String RECIPIENT_LETTER = "Введите текст письма";
-
+    private static final String INCOMING_PATTERN = "Письмо от %s: %s";
+    private static final String OUTGOING_PATTERN = "Письмо к %s: %s";
     private static final Scanner scanner = new Scanner(System.in);
 
     public ArrayList<User> usersList;
@@ -52,18 +55,27 @@ public class OneGramChat {
                         });
     }
 
+    /**
+     * Выход пользователя из системы
+     */
     public void logOutUser() {
         currentUser = null;
     }
 
+    /**
+     * Считывание ответа на запрос системой имени пользователя
+     */
     private String askUserName() {
         System.out.println(ENTER_USER_NAME);
-        return scanner.next();
+        return scanner.nextLine();
     }
 
+    /**
+     * Считывание ответа на запрос системой пароля пользователя
+     */
     private String askUserPassword() {
         System.out.println(ENTER_USER_PASSWORD);
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     /**
@@ -71,7 +83,7 @@ public class OneGramChat {
      */
     private String askNameUserForLetter() {
         System.out.println(RECIPIENT_USER);
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     /**
@@ -79,7 +91,7 @@ public class OneGramChat {
      */
     private String askTextForLetter() {
         System.out.println(RECIPIENT_LETTER);
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     /**
@@ -104,7 +116,7 @@ public class OneGramChat {
     }
 
     /**
-     * Поиск пролучателя
+     * Запись сообщения получателю
      */
     private void writeMessageToRecipientUser(String nameUser, Message message) {
         findRecipientUser(nameUser)
@@ -125,5 +137,38 @@ public class OneGramChat {
         Message message = new Message(letter, currentUser, findRecipientUser(recipient));
         writeMessageToCurrentUser(message);
         writeMessageToRecipientUser(recipient, message);
+    }
+
+    /**
+     * Чтение и вывод в консоль всех сообщений пользователя
+     */
+    public void readLetters() {
+        if (currentUser == null) {
+            throw new RuntimeException(USER_IS_NOT_LOGGED_IN);
+        }
+        printIncomingMessage();
+        printOutgoingMessage();
+    }
+
+    /**
+     * Печать в консоль всех входящих сообщений пользователя
+     */
+    private void printIncomingMessage() {
+        currentUser
+                .getMessages()
+                .get(MessageType.INCOMING)
+                .forEach(message -> System.out.println(
+                        INCOMING_PATTERN.formatted(message.getSender().getName(), message.getText())));
+    }
+
+    /**
+     * Печать в консоль всех исходящих сообщений пользователя
+     */
+    private void printOutgoingMessage() {
+        currentUser
+                .getMessages()
+                .get(MessageType.OUTGOING)
+                .forEach(message -> System.out.println(
+                        OUTGOING_PATTERN.formatted(message.getSender().getName(), message.getText())));
     }
 }
