@@ -116,7 +116,7 @@ public class OneGramChat {
     }
 
     /**
-     * Поиск пролучателя
+     * Запись сообщения получателю
      */
     private void writeMessageToRecipientUser(String nameUser, Message message) {
         findRecipientUser(nameUser)
