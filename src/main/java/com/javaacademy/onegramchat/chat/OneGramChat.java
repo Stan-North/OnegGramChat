@@ -12,14 +12,11 @@ public class OneGramChat {
     private static final String ENTER_USER_PASSWORD = "Введите пароль";
     private static final String USER_LOGGED_IN = "Пользователь авторизован";
     private static final String USER_DO_NOT_EXIST_ERROR = "Такого пользователя нет";
-
     private static final String USER_IS_NOT_LOGGED_IN = "Вы не авторизованы";
     private static final String RECIPIENT_USER = "Введите имя адресата";
     private static final String RECIPIENT_LETTER = "Введите текст письма";
-
     private static final String INCOMING_PATTERN = "Письмо от %s: %s";
     private static final String OUTGOING_PATTERN = "Письмо к %s: %s";
-
     private static final Scanner scanner = new Scanner(System.in);
 
     public ArrayList<User> usersList;
