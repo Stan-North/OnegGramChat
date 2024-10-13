@@ -80,19 +80,19 @@ public class OneGramChat {
     private void isNoAuthorizedUserChat() {
         String command;
         do {
-        System.out.println(CHAT_GREETING);
-        System.out.println(CHAT_COMMAND_CREATE_USER + " * " + CHAT_COMMAND_LOG_IN
-                + " * " + CHAT_COMMAND_EXIT);
-        command = scanner.nextLine();
-        if (command.equals(CHAT_COMMAND_CREATE_USER)) {
-            createUser();
-        } else if (command.equals(CHAT_COMMAND_LOG_IN)) {
-            logInUser();
-        } else if (command.equals(CHAT_COMMAND_EXIT)) {
-            System.out.println(CHAT_EXIT_MESSAGE);
-            System.exit(0);
-        }
-    } while (!(command.equals(CHAT_COMMAND_CREATE_USER) || command.equals(CHAT_COMMAND_LOG_IN)
+            System.out.println(CHAT_GREETING);
+            System.out.println(CHAT_COMMAND_CREATE_USER + " * " + CHAT_COMMAND_LOG_IN
+                    + " * " + CHAT_COMMAND_EXIT);
+            command = scanner.nextLine();
+            if (command.equals(CHAT_COMMAND_CREATE_USER)) {
+                createUser();
+            } else if (command.equals(CHAT_COMMAND_LOG_IN)) {
+                logInUser();
+            } else if (command.equals(CHAT_COMMAND_EXIT)) {
+                System.out.println(CHAT_EXIT_MESSAGE);
+                System.exit(0);
+            }
+        } while (!(command.equals(CHAT_COMMAND_CREATE_USER) || command.equals(CHAT_COMMAND_LOG_IN)
                 || command.equals(CHAT_COMMAND_EXIT)));
     }
 
@@ -102,21 +102,21 @@ public class OneGramChat {
     private void isAuthorizedUserChat() {
         String command;
         do {
-        System.out.printf(CHAT_GREETING_LOG_IN_USER, currentUser.getName());
-        System.out.println(CHAT_COMMAND_WRITE + " * " + CHAT_COMMAND_READ
-                + " * " + CHAT_COMMAND_LOG_OUT + " * " + CHAT_COMMAND_EXIT);
-        command = scanner.nextLine();
-        if (command.equals(CHAT_COMMAND_WRITE)) {
-            writeLetter();
-        } else if (command.equals(CHAT_COMMAND_READ)) {
-            printIncomingMessage();
-        } else if (command.equals(CHAT_COMMAND_LOG_OUT)) {
-            logOutUser();
-        } else if (command.equals(CHAT_COMMAND_EXIT)) {
-            System.out.println(CHAT_EXIT_MESSAGE);
-            System.exit(0);
-        }
-    } while (!(command.equals(CHAT_COMMAND_WRITE) || command.equals(CHAT_COMMAND_READ)
+            System.out.printf(CHAT_GREETING_LOG_IN_USER, currentUser.getName());
+            System.out.println(CHAT_COMMAND_WRITE + " * " + CHAT_COMMAND_READ
+                    + " * " + CHAT_COMMAND_LOG_OUT + " * " + CHAT_COMMAND_EXIT);
+            command = scanner.nextLine();
+            if (command.equals(CHAT_COMMAND_WRITE)) {
+                writeLetter();
+            } else if (command.equals(CHAT_COMMAND_READ)) {
+                readLetters();
+            } else if (command.equals(CHAT_COMMAND_LOG_OUT)) {
+                logOutUser();
+            } else if (command.equals(CHAT_COMMAND_EXIT)) {
+                System.out.println(CHAT_EXIT_MESSAGE);
+                System.exit(0);
+            }
+        } while (!(command.equals(CHAT_COMMAND_WRITE) || command.equals(CHAT_COMMAND_READ)
                 || command.equals(CHAT_COMMAND_LOG_OUT) || command.equals(CHAT_COMMAND_EXIT)));
     }
 
