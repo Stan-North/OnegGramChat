@@ -1,40 +1,16 @@
 package com.javaacademy.onegramchat.chat;
 
-import com.javaacademy.onegramchat.message.Message;
-import com.javaacademy.onegramchat.message.MessageType;
 import com.javaacademy.onegramchat.user.User;
 
 import java.util.ArrayList;
-import java.util.Scanner;
+
+import static com.javaacademy.onegramchat.chat.ChatConstants.*;
+import static com.javaacademy.onegramchat.chat.ChatUtil.*;
+import static com.javaacademy.onegramchat.chat.CreateUser.createUser;
+import static com.javaacademy.onegramchat.chat.ReadMessage.readMessages;
+import static com.javaacademy.onegramchat.chat.WriteMessage.writeLetter;
 
 public class OneGramChat {
-    private static final String ENTER_USER_NAME = "Введите имя пользователя";
-    private static final String ENTER_USER_PASSWORD = "Введите пароль";
-    private static final String USER_LOGGED_IN = " Пользователь авторизован";
-    private static final String USER_CREATE = " Пользователь создан";
-    private static final String USER_LOG_OUT = "Пользователь %s вышел из OneGramChat\n";
-    private static final String USER_DO_NOT_EXIST_ERROR = "Такого пользователя нет";
-    private static final String USER_IS_NOT_LOGGED_IN = "Вы не авторизованы";
-    private static final String RECIPIENT_USER = "Введите имя адресата";
-    private static final String RECIPIENT_LETTER = "Введите текст письма";
-    private static final String USER_SENT_EMAIL = "Вы отправили письмо адресату %s\n";
-    private static final String INCOMING_PATTERN = "Письмо от %s: %s";
-    private static final String OUTGOING_PATTERN = "Письмо к %s: %s";
-    private static final String CHAT_GREETING =
-            "Вас приветствует OneGramChat!\nВведите команду что вы хотите сделать:";
-    private static final String CHAT_GREETING_LOG_IN_USER =
-            "Вы вошли в OneGramChat как %s!\nВведите команду что вы хотите сделать:\n";
-    private static final String CHAT_EXIT_MESSAGE =
-            "До встречи в OneGramChat!\nПрограмма закончила работу";
-    private static final String CHAT_COMMAND_LOG_IN = "войти";
-    private static final String CHAT_COMMAND_CREATE_USER = "новый";
-    private static final String CHAT_COMMAND_LOG_OUT = "выйти";
-    private static final String CHAT_COMMAND_WRITE = "написать";
-    private static final String CHAT_COMMAND_READ = "прочитать";
-    private static final String CHAT_COMMAND_EXIT = "exit";
-    private static final String DELIMITER = "==========================";
-    private static final Scanner scanner = new Scanner(System.in);
-
     public ArrayList<User> usersList;
     private User currentUser;
 
@@ -49,50 +25,60 @@ public class OneGramChat {
         String command;
         do {
             if (currentUser != null) {
-                System.out.printf(CHAT_GREETING_LOG_IN_USER, currentUser.getName());
+                printFormatted(CHAT_GREETING_LOG_IN_USER, currentUser.getName());
             } else {
-                System.out.println(CHAT_GREETING);
+                print(CHAT_GREETING);
             }
-            System.out.println(CHAT_COMMAND_CREATE_USER + " * " + CHAT_COMMAND_LOG_IN
-                    + " * " + CHAT_COMMAND_WRITE + " * " + CHAT_COMMAND_READ
-                    + " * " + CHAT_COMMAND_LOG_OUT + " * " + CHAT_COMMAND_EXIT);
-
-            command = scanner.nextLine();
-            switch (command) {
-                case CHAT_COMMAND_CREATE_USER -> createUser();
-                case CHAT_COMMAND_LOG_IN -> logInUser();
-                case CHAT_COMMAND_WRITE -> writeLetter();
-                case CHAT_COMMAND_READ -> printIncomingMessage();
-                case CHAT_COMMAND_LOG_OUT -> logOutUser();
-                case CHAT_COMMAND_EXIT -> {
-                    System.out.println(CHAT_EXIT_MESSAGE);
-                    System.exit(0);
-                }
-            }
-        } while (!(command.equals(CHAT_COMMAND_CREATE_USER) || command.equals(CHAT_COMMAND_LOG_IN)
-                || command.equals(CHAT_COMMAND_WRITE) || command.equals(CHAT_COMMAND_READ)
-                || command.equals(CHAT_COMMAND_LOG_OUT) || command.equals(CHAT_COMMAND_EXIT)));
-
+            print(CHAT_ALL_COMMAND);
+            command = input();
+            doCommand(command);
+        } while (!(hasCommandChoice(command)));
         scanner.close();
     }
 
     /**
-     * Создание пользователя
+     * Выполнение команды
      */
-    public void createUser() {
-        String name = askUserName();
-        String password = askUserPassword();
-        User user = new User(name, password);
-        usersList.add(user);
-        System.out.println(name + USER_CREATE);
-        System.out.println(DELIMITER);
+    private void doCommand(String command) {
+        switch (command) {
+            case CHAT_COMMAND_CREATE_USER -> createUserInChat();
+            case CHAT_COMMAND_LOG_IN -> logInUser();
+            case CHAT_COMMAND_WRITE -> writeLetterInChat();
+            case CHAT_COMMAND_READ -> readMessagesInChat(currentUser);
+            case CHAT_COMMAND_LOG_OUT -> logOutUser();
+            case CHAT_COMMAND_EXIT -> {
+                print(CHAT_EXIT_MESSAGE);
+                System.exit(0);
+            }
+        }
+    }
+
+    /**
+     * Проверка команды, выбранной из списка
+     */
+    private boolean hasCommandChoice(String command) {
+        int result = 0;
+        result += command.equals(CHAT_COMMAND_CREATE_USER) ? 1 : 0;
+        result += command.equals(CHAT_COMMAND_LOG_IN) ? 1 : 0;
+        result += command.equals(CHAT_COMMAND_WRITE) ? 1 : 0;
+        result += command.equals(CHAT_COMMAND_READ) ? 1 : 0;
+        result += command.equals(CHAT_COMMAND_LOG_OUT) ? 1 : 0;
+        result += command.equals(CHAT_COMMAND_EXIT) ? 1 : 0;
+        return result > 0;
+    }
+
+    /**
+     * Создание пользователя и запуск чата
+     */
+    private void createUserInChat() {
+        createUser(usersList);
         startingTheChat();
     }
 
     /**
      * Авторизация пользователя
      */
-    public void logInUser() {
+    private void logInUser() {
         String name = askUserName();
         String password = askUserPassword();
         usersList.stream()
@@ -101,9 +87,9 @@ public class OneGramChat {
                 .findAny()
                 .ifPresentOrElse(
                         person -> {
-                            System.out.println(name + USER_LOGGED_IN);
+                            print(name, USER_LOGGED_IN);
                             currentUser = person;
-                            System.out.println(DELIMITER);
+                            print(DELIMITER);
                             startingTheChat();
                         },
                         () -> {
@@ -114,127 +100,26 @@ public class OneGramChat {
     /**
      * Выход пользователя из системы
      */
-    public void logOutUser() {
-        System.out.printf(USER_LOG_OUT, currentUser.getName());
-        System.out.println(DELIMITER);
+    private void logOutUser() {
+        printFormatted(USER_LOG_OUT, currentUser.getName());
+        print(DELIMITER);
         currentUser = null;
         startingTheChat();
     }
 
     /**
-     * Считывание ответа на запрос системой имени пользователя
-     */
-    private String askUserName() {
-        System.out.println(ENTER_USER_NAME);
-        return scanner.nextLine();
-    }
-
-    /**
-     * Считывание ответа на запрос системой пароля пользователя
-     */
-    private String askUserPassword() {
-        System.out.println(ENTER_USER_PASSWORD);
-        return scanner.nextLine();
-    }
-
-    /**
-     * Запрос у пользователя имени адресата
-     */
-    private String askNameUserForLetter() {
-        System.out.println(RECIPIENT_USER);
-        return scanner.nextLine();
-    }
-
-    /**
-     * Запрос у пользователя текста сообщения
-     */
-    private String askTextForLetter() {
-        System.out.println(RECIPIENT_LETTER);
-        return scanner.nextLine();
-    }
-
-    /**
-     * Запись сообщения текущему пользователю
-     */
-    private void writeMessageToCurrentUser(Message message) {
-        currentUser
-                .getMessages()
-                .get(MessageType.OUTGOING)
-                .add(message);
-    }
-
-    /**
-     * Поиск получателя сообщения
-     */
-    private User findRecipientUser(String name) {
-        return usersList
-                .stream()
-                .filter(e -> e.getName().equals(name))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(USER_DO_NOT_EXIST_ERROR));
-    }
-
-    /**
-     * Запись сообщения получателю
-     */
-    private void writeMessageToRecipientUser(String nameUser, Message message) {
-        findRecipientUser(nameUser)
-                .getMessages()
-                .get(MessageType.INCOMING)
-                .add(message);
-    }
-
-    /**
      * Запись полученных имени адресата и письма в исходящие и исходящие сообщения
      */
-    public void writeLetter() {
-        if (currentUser == null) {
-            throw new RuntimeException(USER_IS_NOT_LOGGED_IN);
-        }
-        String recipient = askNameUserForLetter();
-        String letter = askTextForLetter();
-        Message message = new Message(letter, currentUser, findRecipientUser(recipient));
-        writeMessageToCurrentUser(message);
-        writeMessageToRecipientUser(recipient, message);
-        System.out.printf(USER_SENT_EMAIL, recipient);
-        System.out.println(DELIMITER);
+    private void writeLetterInChat() {
+        writeLetter(currentUser, usersList);
         startingTheChat();
     }
 
     /**
      * Чтение и вывод в консоль всех сообщений пользователя
      */
-    public void readLetters() {
-        if (currentUser == null) {
-            throw new RuntimeException(USER_IS_NOT_LOGGED_IN);
-        }
-        printIncomingMessage();
-        printOutgoingMessage();
-    }
-
-    /**
-     * Печать в консоль всех входящих сообщений пользователя
-     */
-    private void printIncomingMessage() {
-        currentUser
-                .getMessages()
-                .get(MessageType.INCOMING)
-                .forEach(message -> System.out.println(
-                        INCOMING_PATTERN.formatted(message.getSender().getName(),
-                                message.getText())));
-        System.out.println(DELIMITER);
+    private void readMessagesInChat(User currentUser) {
+        readMessages(currentUser);
         startingTheChat();
-    }
-
-    /**
-     * Печать в консоль всех исходящих сообщений пользователя
-     */
-    private void printOutgoingMessage() {
-        currentUser
-                .getMessages()
-                .get(MessageType.OUTGOING)
-                .forEach(message -> System.out.println(
-                        OUTGOING_PATTERN.formatted(message.getSender().getName(),
-                                message.getText())));
     }
 }
