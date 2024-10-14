@@ -30,7 +30,8 @@ public class ReadMessage {
         if (messages.isEmpty()) {
             printFormatted(USER_HAS_NO_EMAIL, MessageType.INCOMING.getType());
         } else {
-            messages.forEach(message -> printMessage(INCOMING_PATTERN, message));
+            messages.forEach(message -> printFormatted(
+                    INCOMING_PATTERN, message.getSender().getName(), message.getText()));
         }
     }
 
@@ -42,14 +43,8 @@ public class ReadMessage {
         if (messages.isEmpty()) {
             printFormatted(USER_HAS_NO_EMAIL, MessageType.OUTGOING.getType());
         } else {
-            messages.forEach(message -> printMessage(OUTGOING_PATTERN, message));
+            messages.forEach(message -> printFormatted(
+                    OUTGOING_PATTERN, message.getRecipient().getName(), message.getText()));
         }
-    }
-
-    /**
-     * Печать сообщения по шаблону
-     */
-    private static void printMessage(String template, Message message) {
-        printFormatted(template, message.getSender().getName(), message.getText());
     }
 }
