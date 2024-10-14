@@ -3,7 +3,7 @@ package com.javaacademy.onegramchat.message;
 public enum MessageType {
     INCOMING("Входящие"),
     OUTGOING("Исходящие");
-    private String type;
+    private final String type;
 
     MessageType(String type) {
         this.type = type;

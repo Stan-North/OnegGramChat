@@ -35,7 +35,7 @@ public class ChatUtil {
     /**
      * обертка nextLine
      */
-    protected static final String input() {
+    protected static String input() {
         return scanner.nextLine();
     }
 
