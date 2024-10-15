@@ -4,10 +4,13 @@ import com.javaacademy.onegramchat.message.Message;
 import com.javaacademy.onegramchat.message.MessageType;
 import com.javaacademy.onegramchat.user.User;
 import com.javaacademy.onegramchat.user.UserErrorHandlerException;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
+@NoArgsConstructor
+@Setter
+@Getter
 public class OneGramChat {
     private static final String ENTER_USER_NAME = "Введите имя пользователя";
     private static final String ENTER_USER_PASSWORD = "Введите пароль";
@@ -16,6 +19,8 @@ public class OneGramChat {
     private static final String USER_LOG_OUT = "Пользователь %s вышел из OneGramChat\n";
     private static final String USER_DO_NOT_EXIST_ERROR = "Такого пользователя нет";
     private static final String USER_IS_NOT_LOGGED_IN = "Вы не авторизованы";
+    private static final String ERROR_WORD = "Ошибка! ";
+    private static final String USER_FIELD_NULL = "Введено пустое имя или пароль";
     private static final String RECIPIENT_USER = "Введите имя адресата";
     private static final String RECIPIENT_LETTER = "Введите текст письма";
     private static final String USER_SENT_EMAIL = "Вы отправили письмо адресату %s\n";
@@ -36,19 +41,30 @@ public class OneGramChat {
     private static final String CHAT_COMMAND_READ = "прочитать";
     private static final String CHAT_COMMAND_EXIT = "exit";
     private static final String DELIMITER = "==========================";
-    private static final Scanner scanner = new Scanner(System.in);
+    private static final String AVAILABLE_COMMANDS = "[новый], [войти], [написать], [прочитать], [выйти], [exit]";
+    private static final String WORNG_COMMAND = "Команда не поддерживается или введена пустая строка";
 
-    public ArrayList<User> usersList;
+
+    private List<User> usersList;
     private User currentUser;
 
-    public OneGramChat() {
-        usersList = new ArrayList<>();
+    /**
+     * Основной метод
+     */
+    public static void start() {
+        ArrayList<User> users = new ArrayList<>();
+        val oneGramChat = new OneGramChat();
+        oneGramChat.setUsersList(users);
+        oneGramChat.startingTheChat();
     }
+
 
     /**
      * Запуск чата
      */
-    public void startingTheChat() {
+    private void startingTheChat() {
+        @Cleanup
+        val scanner = new Scanner(System.in);
         String command;
         do {
             if (currentUser != null) {
@@ -56,56 +72,74 @@ public class OneGramChat {
             } else {
                 System.out.println(CHAT_GREETING);
             }
-            System.out.println(CHAT_COMMAND_CREATE_USER + " * " + CHAT_COMMAND_LOG_IN
-                    + " * " + CHAT_COMMAND_WRITE + " * " + CHAT_COMMAND_READ
-                    + " * " + CHAT_COMMAND_LOG_OUT + " * " + CHAT_COMMAND_EXIT);
-
+            System.out.println(AVAILABLE_COMMANDS);
             command = scanner.nextLine();
             try {
                 switch (command) {
-                    case CHAT_COMMAND_CREATE_USER -> createUser();
-                    case CHAT_COMMAND_LOG_IN -> logInUser();
-                    case CHAT_COMMAND_WRITE -> writeLetter();
+                    case CHAT_COMMAND_CREATE_USER -> createUser(scanner);
+                    case CHAT_COMMAND_LOG_IN -> logInUser(scanner);
+                    case CHAT_COMMAND_WRITE -> writeLetter(scanner);
                     case CHAT_COMMAND_READ -> readLetters();
                     case CHAT_COMMAND_LOG_OUT -> logOutUser();
                     case CHAT_COMMAND_EXIT -> {
                         System.out.println(CHAT_EXIT_MESSAGE);
                         System.exit(0);
                     }
+                    default -> {
+                        System.out.println(WORNG_COMMAND);
+                        System.out.println(DELIMITER);
+                        startingTheChat();
+                    }
                 }
             } catch (UserErrorHandlerException e) {
-                System.out.println("Ошибка: " + e.getMessage());
+                System.out.println(ERROR_WORD + e.getMessage());
                 System.out.println(DELIMITER);
                 startingTheChat();
             }
+        } while (!isCorrectCommand(command));
+    }
 
-        } while (!(command.equals(CHAT_COMMAND_CREATE_USER) || command.equals(CHAT_COMMAND_LOG_IN)
+    /**
+     * Проверка на возможные команды чата
+     */
+    private boolean isCorrectCommand(String command) {
+        return (command.equals(CHAT_COMMAND_CREATE_USER) || command.equals(CHAT_COMMAND_LOG_IN)
                 || command.equals(CHAT_COMMAND_WRITE) || command.equals(CHAT_COMMAND_READ)
-                || command.equals(CHAT_COMMAND_LOG_OUT) || command.equals(CHAT_COMMAND_EXIT)));
-
-        scanner.close();
+                || command.equals(CHAT_COMMAND_LOG_OUT) || command.equals(CHAT_COMMAND_EXIT));
     }
 
     /**
      * Создание пользователя
      */
-    public void createUser() {
-        String name = askUserName();
-        String password = askUserPassword();
-        User user = new User(name, password);
+    private void createUser(Scanner scanner) {
+        val user = isUserFieldsValid(scanner);
+        HashMap<MessageType, ArrayList<Message>> messages = new HashMap<>();
+        messages.put(MessageType.OUTGOING, new ArrayList<>());
+        messages.put(MessageType.INCOMING, new ArrayList<>());
+        user.setMessages(messages);
         usersList.add(user);
-        System.out.println(name + USER_CREATE);
+        System.out.println(user.getName() + USER_CREATE);
         System.out.println(DELIMITER);
         startingTheChat();
     }
 
     /**
+     * проверка на создание пользователя
+     */
+    private User isUserFieldsValid(Scanner scanner) {
+        val user = new User(askUserName(scanner), askUserPassword(scanner));
+        if (user.getName().isEmpty() || user.getPassword().isEmpty()) {
+            throw new UserErrorHandlerException(USER_FIELD_NULL);
+        }
+        return user;
+    }
+
+    /**
      * Авторизация пользователя
      */
-    public void logInUser() {
-
-        String name = askUserName();
-        String password = askUserPassword();
+    private void logInUser(Scanner scanner) {
+        val name = askUserName(scanner);
+        val password = askUserPassword(scanner);
         usersList.stream()
                 .filter(person -> person.getName().equals(name)
                         && person.getPassword().equals(password))
@@ -117,22 +151,14 @@ public class OneGramChat {
                             System.out.println(DELIMITER);
                             startingTheChat();
                         },
-                        () -> {
-                            try {
-                                throw new UserErrorHandlerException(USER_DO_NOT_EXIST_ERROR);
-                            } catch (UserErrorHandlerException e) {
-                                System.out.println("Ошибка: " + e.getMessage());
-                                System.out.println(DELIMITER);
-                                startingTheChat();
-                            }
-                        });
-
+                        () -> { throw new UserErrorHandlerException(USER_DO_NOT_EXIST_ERROR); }
+                );
     }
 
     /**
      * Выход пользователя из системы
      */
-    public void logOutUser() throws UserErrorHandlerException {
+    private void logOutUser() {
         if (currentUser == null) {
             throw new UserErrorHandlerException(USER_IS_NOT_LOGGED_IN);
         }
@@ -145,7 +171,7 @@ public class OneGramChat {
     /**
      * Считывание ответа на запрос системой имени пользователя
      */
-    private String askUserName() {
+    private String askUserName(Scanner scanner) {
         System.out.println(ENTER_USER_NAME);
         return scanner.nextLine();
     }
@@ -153,7 +179,7 @@ public class OneGramChat {
     /**
      * Считывание ответа на запрос системой пароля пользователя
      */
-    private String askUserPassword() {
+    private String askUserPassword(Scanner scanner) {
         System.out.println(ENTER_USER_PASSWORD);
         return scanner.nextLine();
     }
@@ -161,7 +187,7 @@ public class OneGramChat {
     /**
      * Запрос у пользователя имени адресата
      */
-    private String askNameUserForLetter() {
+    private String askNameUserForLetter(Scanner scanner) {
         System.out.println(RECIPIENT_USER);
         return scanner.nextLine();
     }
@@ -169,7 +195,7 @@ public class OneGramChat {
     /**
      * Запрос у пользователя текста сообщения
      */
-    private String askTextForLetter() {
+    private String askTextForLetter(Scanner scanner) {
         System.out.println(RECIPIENT_LETTER);
         return scanner.nextLine();
     }
@@ -208,13 +234,13 @@ public class OneGramChat {
     /**
      * Запись полученных имени адресата и письма в исходящие и исходящие сообщения
      */
-    public void writeLetter() throws UserErrorHandlerException {
+    private void writeLetter(Scanner scanner) {
         if (currentUser == null) {
             throw new UserErrorHandlerException(USER_IS_NOT_LOGGED_IN);
         }
-        String recipient = askNameUserForLetter();
-        String letter = askTextForLetter();
-        Message message = new Message(letter, currentUser, findRecipientUser(recipient));
+        val recipient = askNameUserForLetter(scanner);
+        val letter = askTextForLetter(scanner);
+        val message = new Message(letter, currentUser, findRecipientUser(recipient));
         writeMessageToCurrentUser(message);
         writeMessageToRecipientUser(recipient, message);
         System.out.printf(USER_SENT_EMAIL, recipient);
@@ -225,7 +251,7 @@ public class OneGramChat {
     /**
      * Чтение и вывод в консоль всех сообщений пользователя
      */
-    public void readLetters() throws UserErrorHandlerException {
+    private void readLetters() throws UserErrorHandlerException {
         if (currentUser == null) {
             throw new UserErrorHandlerException(USER_IS_NOT_LOGGED_IN);
         }
@@ -239,7 +265,7 @@ public class OneGramChat {
      * Печать в консоль всех входящих сообщений пользователя
      */
     private void printIncomingMessage() {
-        ArrayList<Message> messages = currentUser.getMessages().get(MessageType.INCOMING);
+        val messages = currentUser.getMessages().get(MessageType.INCOMING);
         if (messages.isEmpty()) {
             System.out.println(USER_HAS_NO_INCOMING_EMAIL);
         } else {

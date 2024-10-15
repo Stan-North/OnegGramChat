@@ -2,41 +2,17 @@ package com.javaacademy.onegramchat.user;
 
 import com.javaacademy.onegramchat.message.Message;
 import com.javaacademy.onegramchat.message.MessageType;
+import lombok.*;
 
 import java.util.*;
 
+@RequiredArgsConstructor
+@Getter
 public class User {
+    @NonNull
     private final String name;
+    @NonNull
     private final String password;
+    @Setter
     private HashMap<MessageType, ArrayList<Message>> messages;
-
-    public User(String name, String password) {
-        this.name = name;
-        this.password = password;
-        messages = new HashMap<>();
-        messages.put(MessageType.INCOMING, new ArrayList<>());
-        messages.put(MessageType.OUTGOING, new ArrayList<>());
-
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Map<MessageType, ArrayList<Message>> getMessages() {
-        return messages;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", messages=" + messages +
-                '}';
-    }
 }
