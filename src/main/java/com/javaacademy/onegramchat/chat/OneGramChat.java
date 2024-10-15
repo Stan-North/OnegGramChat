@@ -21,7 +21,8 @@ public class OneGramChat {
     private static final String USER_SENT_EMAIL = "Вы отправили письмо адресату %s\n";
     private static final String INCOMING_PATTERN = "Письмо от %s: %s\n";
     private static final String OUTGOING_PATTERN = "Письмо к %s: %s\n";
-    protected static final String USER_HAS_NO_EMAIL = "У вас нет писем";
+    protected static final String USER_HAS_NO_INCOMING_EMAIL = "У вас нет входящих писем";
+    protected static final String USER_HAS_NO_OUTGOING_EMAIL = "У вас нет исходящих писем";
     private static final String CHAT_GREETING =
             "Вас приветствует OneGramChat!\nВведите команду что вы хотите сделать:";
     private static final String CHAT_GREETING_LOG_IN_USER =
@@ -240,7 +241,7 @@ public class OneGramChat {
     private void printIncomingMessage() {
         ArrayList<Message> messages = currentUser.getMessages().get(MessageType.INCOMING);
         if (messages.isEmpty()) {
-            System.out.println(USER_HAS_NO_EMAIL);
+            System.out.println(USER_HAS_NO_INCOMING_EMAIL);
         } else {
             messages.forEach(message -> System.out.printf(
                     INCOMING_PATTERN, message.getSender().getName(), message.getText()));
@@ -253,7 +254,7 @@ public class OneGramChat {
     private void printOutgoingMessage() {
         ArrayList<Message> messages = currentUser.getMessages().get(MessageType.OUTGOING);
         if (messages.isEmpty()) {
-            System.out.println(USER_HAS_NO_EMAIL);
+            System.out.println(USER_HAS_NO_OUTGOING_EMAIL);
         } else {
             messages.forEach(message -> System.out.printf(
                     OUTGOING_PATTERN, message.getRecipient().getName(), message.getText()));
