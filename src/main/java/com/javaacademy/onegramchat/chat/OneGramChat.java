@@ -18,8 +18,9 @@ public class OneGramChat {
     private static final String RECIPIENT_USER = "Введите имя адресата";
     private static final String RECIPIENT_LETTER = "Введите текст письма";
     private static final String USER_SENT_EMAIL = "Вы отправили письмо адресату %s\n";
-    private static final String INCOMING_PATTERN = "Письмо от %s: %s";
-    private static final String OUTGOING_PATTERN = "Письмо к %s: %s";
+    private static final String INCOMING_PATTERN = "Письмо от %s: %s\n";
+    private static final String OUTGOING_PATTERN = "Письмо к %s: %s\n";
+    protected static final String USER_HAS_NO_EMAIL = "У вас нет писем";
     private static final String CHAT_GREETING =
             "Вас приветствует OneGramChat!\nВведите команду что вы хотите сделать:";
     private static final String CHAT_GREETING_LOG_IN_USER =
@@ -62,7 +63,7 @@ public class OneGramChat {
                 case CHAT_COMMAND_CREATE_USER -> createUser();
                 case CHAT_COMMAND_LOG_IN -> logInUser();
                 case CHAT_COMMAND_WRITE -> writeLetter();
-                case CHAT_COMMAND_READ -> printIncomingMessage();
+                case CHAT_COMMAND_READ -> readLetters();
                 case CHAT_COMMAND_LOG_OUT -> logOutUser();
                 case CHAT_COMMAND_EXIT -> {
                     System.out.println(CHAT_EXIT_MESSAGE);
@@ -210,31 +211,33 @@ public class OneGramChat {
         }
         printIncomingMessage();
         printOutgoingMessage();
+        System.out.println(DELIMITER);
+        startingTheChat();
     }
 
     /**
      * Печать в консоль всех входящих сообщений пользователя
      */
     private void printIncomingMessage() {
-        currentUser
-                .getMessages()
-                .get(MessageType.INCOMING)
-                .forEach(message -> System.out.println(
-                        INCOMING_PATTERN.formatted(message.getSender().getName(),
-                                message.getText())));
-        System.out.println(DELIMITER);
-        startingTheChat();
+        ArrayList<Message> messages = currentUser.getMessages().get(MessageType.INCOMING);
+        if (messages.isEmpty()) {
+            System.out.println(USER_HAS_NO_EMAIL);
+        } else {
+            messages.forEach(message -> System.out.printf(
+                    INCOMING_PATTERN, message.getSender().getName(), message.getText()));
+        }
     }
 
     /**
      * Печать в консоль всех исходящих сообщений пользователя
      */
     private void printOutgoingMessage() {
-        currentUser
-                .getMessages()
-                .get(MessageType.OUTGOING)
-                .forEach(message -> System.out.println(
-                        OUTGOING_PATTERN.formatted(message.getSender().getName(),
-                                message.getText())));
+        ArrayList<Message> messages = currentUser.getMessages().get(MessageType.OUTGOING);
+        if (messages.isEmpty()) {
+            System.out.println(USER_HAS_NO_EMAIL);
+        } else {
+            messages.forEach(message -> System.out.printf(
+                    OUTGOING_PATTERN, message.getRecipient().getName(), message.getText()));
+        }
     }
 }
