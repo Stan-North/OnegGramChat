@@ -3,6 +3,7 @@ package com.javaacademy.onegramchat.chat;
 import com.javaacademy.onegramchat.message.Message;
 import com.javaacademy.onegramchat.message.MessageType;
 import com.javaacademy.onegramchat.user.User;
+import com.javaacademy.onegramchat.user.UserErrorHandlerException;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -20,7 +21,8 @@ public class OneGramChat {
     private static final String USER_SENT_EMAIL = "Вы отправили письмо адресату %s\n";
     private static final String INCOMING_PATTERN = "Письмо от %s: %s\n";
     private static final String OUTGOING_PATTERN = "Письмо к %s: %s\n";
-    protected static final String USER_HAS_NO_EMAIL = "У вас нет писем";
+    protected static final String USER_HAS_NO_INCOMING_EMAIL = "У вас нет входящих писем";
+    protected static final String USER_HAS_NO_OUTGOING_EMAIL = "У вас нет исходящих писем";
     private static final String CHAT_GREETING =
             "Вас приветствует OneGramChat!\nВведите команду что вы хотите сделать:";
     private static final String CHAT_GREETING_LOG_IN_USER =
@@ -59,17 +61,24 @@ public class OneGramChat {
                     + " * " + CHAT_COMMAND_LOG_OUT + " * " + CHAT_COMMAND_EXIT);
 
             command = scanner.nextLine();
-            switch (command) {
-                case CHAT_COMMAND_CREATE_USER -> createUser();
-                case CHAT_COMMAND_LOG_IN -> logInUser();
-                case CHAT_COMMAND_WRITE -> writeLetter();
-                case CHAT_COMMAND_READ -> readLetters();
-                case CHAT_COMMAND_LOG_OUT -> logOutUser();
-                case CHAT_COMMAND_EXIT -> {
-                    System.out.println(CHAT_EXIT_MESSAGE);
-                    System.exit(0);
+            try {
+                switch (command) {
+                    case CHAT_COMMAND_CREATE_USER -> createUser();
+                    case CHAT_COMMAND_LOG_IN -> logInUser();
+                    case CHAT_COMMAND_WRITE -> writeLetter();
+                    case CHAT_COMMAND_READ -> readLetters();
+                    case CHAT_COMMAND_LOG_OUT -> logOutUser();
+                    case CHAT_COMMAND_EXIT -> {
+                        System.out.println(CHAT_EXIT_MESSAGE);
+                        System.exit(0);
+                    }
                 }
+            } catch (UserErrorHandlerException e) {
+                System.out.println("Ошибка: " + e.getMessage());
+                System.out.println(DELIMITER);
+                startingTheChat();
             }
+
         } while (!(command.equals(CHAT_COMMAND_CREATE_USER) || command.equals(CHAT_COMMAND_LOG_IN)
                 || command.equals(CHAT_COMMAND_WRITE) || command.equals(CHAT_COMMAND_READ)
                 || command.equals(CHAT_COMMAND_LOG_OUT) || command.equals(CHAT_COMMAND_EXIT)));
@@ -94,6 +103,7 @@ public class OneGramChat {
      * Авторизация пользователя
      */
     public void logInUser() {
+
         String name = askUserName();
         String password = askUserPassword();
         usersList.stream()
@@ -108,14 +118,24 @@ public class OneGramChat {
                             startingTheChat();
                         },
                         () -> {
-                            throw new RuntimeException(USER_DO_NOT_EXIST_ERROR);
+                            try {
+                                throw new UserErrorHandlerException(USER_DO_NOT_EXIST_ERROR);
+                            } catch (UserErrorHandlerException e) {
+                                System.out.println("Ошибка: " + e.getMessage());
+                                System.out.println(DELIMITER);
+                                startingTheChat();
+                            }
                         });
+
     }
 
     /**
      * Выход пользователя из системы
      */
-    public void logOutUser() {
+    public void logOutUser() throws UserErrorHandlerException {
+        if (currentUser == null) {
+            throw new UserErrorHandlerException(USER_IS_NOT_LOGGED_IN);
+        }
         System.out.printf(USER_LOG_OUT, currentUser.getName());
         System.out.println(DELIMITER);
         currentUser = null;
@@ -167,18 +187,18 @@ public class OneGramChat {
     /**
      * Поиск получателя сообщения
      */
-    private User findRecipientUser(String name) {
+    private User findRecipientUser(String name) throws UserErrorHandlerException {
         return usersList
                 .stream()
                 .filter(e -> e.getName().equals(name))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(USER_DO_NOT_EXIST_ERROR));
+                .orElseThrow(() -> new UserErrorHandlerException(USER_DO_NOT_EXIST_ERROR));
     }
 
     /**
      * Запись сообщения получателю
      */
-    private void writeMessageToRecipientUser(String nameUser, Message message) {
+    private void writeMessageToRecipientUser(String nameUser, Message message) throws UserErrorHandlerException {
         findRecipientUser(nameUser)
                 .getMessages()
                 .get(MessageType.INCOMING)
@@ -188,9 +208,9 @@ public class OneGramChat {
     /**
      * Запись полученных имени адресата и письма в исходящие и исходящие сообщения
      */
-    public void writeLetter() {
+    public void writeLetter() throws UserErrorHandlerException {
         if (currentUser == null) {
-            throw new RuntimeException(USER_IS_NOT_LOGGED_IN);
+            throw new UserErrorHandlerException(USER_IS_NOT_LOGGED_IN);
         }
         String recipient = askNameUserForLetter();
         String letter = askTextForLetter();
@@ -205,9 +225,9 @@ public class OneGramChat {
     /**
      * Чтение и вывод в консоль всех сообщений пользователя
      */
-    public void readLetters() {
+    public void readLetters() throws UserErrorHandlerException {
         if (currentUser == null) {
-            throw new RuntimeException(USER_IS_NOT_LOGGED_IN);
+            throw new UserErrorHandlerException(USER_IS_NOT_LOGGED_IN);
         }
         printIncomingMessage();
         printOutgoingMessage();
@@ -221,7 +241,7 @@ public class OneGramChat {
     private void printIncomingMessage() {
         ArrayList<Message> messages = currentUser.getMessages().get(MessageType.INCOMING);
         if (messages.isEmpty()) {
-            System.out.println(USER_HAS_NO_EMAIL);
+            System.out.println(USER_HAS_NO_INCOMING_EMAIL);
         } else {
             messages.forEach(message -> System.out.printf(
                     INCOMING_PATTERN, message.getSender().getName(), message.getText()));
@@ -234,7 +254,7 @@ public class OneGramChat {
     private void printOutgoingMessage() {
         ArrayList<Message> messages = currentUser.getMessages().get(MessageType.OUTGOING);
         if (messages.isEmpty()) {
-            System.out.println(USER_HAS_NO_EMAIL);
+            System.out.println(USER_HAS_NO_OUTGOING_EMAIL);
         } else {
             messages.forEach(message -> System.out.printf(
                     OUTGOING_PATTERN, message.getRecipient().getName(), message.getText()));
