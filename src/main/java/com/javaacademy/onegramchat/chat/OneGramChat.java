@@ -131,7 +131,10 @@ public class OneGramChat {
     /**
      * Выход пользователя из системы
      */
-    public void logOutUser() {
+    public void logOutUser() throws UserErrorHandlerException {
+        if (currentUser == null) {
+            throw new UserErrorHandlerException(USER_IS_NOT_LOGGED_IN);
+        }
         System.out.printf(USER_LOG_OUT, currentUser.getName());
         System.out.println(DELIMITER);
         currentUser = null;
