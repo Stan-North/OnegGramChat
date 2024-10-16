@@ -1,14 +1,17 @@
 package com.javaacademy.onegramchat.message;
 
 import com.javaacademy.onegramchat.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@AllArgsConstructor
 @Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public class Message {
-    @NonNull private String text;
-    @NonNull private User sender;
-    @NonNull private final User recipient;
+    @NonNull
+    String text;
+    @NonNull
+    User sender;
+    @NonNull
+    User recipient;
 }
