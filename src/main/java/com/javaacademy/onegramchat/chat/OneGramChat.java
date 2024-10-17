@@ -7,7 +7,10 @@ import com.javaacademy.onegramchat.user.UserErrorHandlerException;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 import static com.javaacademy.onegramchat.chat.UtilMessages.*;
 
@@ -129,7 +132,9 @@ public class OneGramChat {
                             currentUser = person;
                             startingTheChat();
                         },
-                        () -> { throw new UserErrorHandlerException(USER_DO_NOT_EXIST_ERROR); }
+                        () -> {
+                            throw new UserErrorHandlerException(USER_DO_NOT_EXIST_ERROR);
+                        }
                 );
     }
 

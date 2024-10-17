@@ -2,10 +2,14 @@ package com.javaacademy.onegramchat.user;
 
 import com.javaacademy.onegramchat.message.Message;
 import com.javaacademy.onegramchat.message.MessageType;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @RequiredArgsConstructor
 @Getter

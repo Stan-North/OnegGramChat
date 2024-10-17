@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 @AllArgsConstructor
 @Getter
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum MessageType {
     INCOMING("Входящие"),
     OUTGOING("Исходящие");
